@@ -15,7 +15,7 @@ To plug this middleware to your Django project, edit your project's
 import django.utils.deprecation
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
-from django.core import urlresolvers
+from django.urls import resolve, Resolver404
 from django.views.static import serve
 
 from djangoflash.context_processors import CONTEXT_VAR
@@ -66,6 +66,7 @@ def _get_flash_from_storage(request):
     setattr(request, CONTEXT_VAR, flash)
     return flash
 
+
 def _get_flash_from_request(request):
     """Returns the :class:`FlashScope` object from the given request. If it
     couldn't be found, returns None.
@@ -77,11 +78,13 @@ def _get_flash_from_request(request):
             raise SuspiciousOperation('Invalid flash: %s' % repr(flash))
     return flash
 
+
 def _should_update_flash(request):
     """Returns True if the flash should be updated, False otherwise.
     """
     return not _is_trailing_slash_missing(request) and \
         not _is_request_to_serve(request)
+
 
 def _is_request_to_serve(request):
     """Returns True if *request* resolves to the built-in ``serve`` view,
@@ -93,10 +96,11 @@ def _is_request_to_serve(request):
     # Uses the value of DEBUG as default value to FLASH_IGNORE_MEDIA
     if getattr(settings, 'FLASH_IGNORE_MEDIA', debug):
         try:
-            return urlresolvers.resolve(request.path_info)[0] == serve
-        except urlresolvers.Resolver404:
+            return resolve(request.path_info)[0] == serve
+        except Resolver404:
             pass
     return False
+
 
 def _is_trailing_slash_missing(request):
     """Returns True if the requested URL are elegible to be intercepted by the
@@ -110,13 +114,14 @@ def _is_trailing_slash_missing(request):
                 return True
     return False
 
+
 def _is_valid_path(path):
     """Returns True if *path* resolves against the default URL resolver,
     False otherwise.
     """
     try:
-        urlresolvers.resolve(path)
+        resolve(path)
         return True
-    except urlresolvers.Resolver404:
+    except Resolver404:
         pass
     return False

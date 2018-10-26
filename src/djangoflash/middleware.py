@@ -12,8 +12,7 @@ To plug this middleware to your Django project, edit your project's
     )
 """
 
-from urlparse import urlparse
-
+import django.utils.deprecation
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.core import urlresolvers
@@ -28,7 +27,7 @@ from djangoflash.storage import storage
 _COMMON_MIDDLEWARE_CLASS = 'django.middleware.common.CommonMiddleware'
 
 
-class FlashMiddleware(object):
+class FlashMiddleware(django.utils.deprecation.MiddlewareMixin):
     """This middleware uses the flash storage backend specified by the
     project's ``settings.py`` file in order to store and retrieve
     :class:`djangoflash.models.FlashScope` objects, being also responsible for

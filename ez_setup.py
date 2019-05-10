@@ -76,8 +76,7 @@ def _validate_md5(egg_name, data):
         if digest != md5_data[egg_name]:
             print(
                 "md5 validation of %s failed!  "
-                "(Possible download problem?)" % egg_name,
-                file=sys.stderr)
+                "(Possible download problem?)" % egg_name)
             sys.exit(2)
     return data
 
